@@ -108,8 +108,9 @@ def _get_classroom_service():
             credentials = service_account.Credentials.from_service_account_file(
                 service_account_path,
                 scopes=[
-                    'https://www.googleapis.com/auth/classroom.coursework.readonly',
-                    'https://www.googleapis.com/auth/classroom.courses.readonly'
+                    'https://www.googleapis.com/auth/classroom.announcements.readonly',
+                    'https://www.googleapis.com/auth/classroom.courses.readonly',
+                    'https://www.googleapis.com/auth/classroom.student-submissions.me.readonly'
                 ]
             )
         else:
@@ -120,8 +121,9 @@ def _get_classroom_service():
             if os.path.exists(token_path):
                 creds = Credentials.from_authorized_user_file(token_path, 
                     [
-                        'https://www.googleapis.com/auth/classroom.coursework.readonly',
-                        'https://www.googleapis.com/auth/classroom.courses.readonly'
+                        'https://www.googleapis.com/auth/classroom.announcements.readonly',
+                        'https://www.googleapis.com/auth/classroom.courses.readonly',
+                        'https://www.googleapis.com/auth/classroom.student-submissions.me.readonly'
                     ])
             
             if not creds or not creds.valid:
