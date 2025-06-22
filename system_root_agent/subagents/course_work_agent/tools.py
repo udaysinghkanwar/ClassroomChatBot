@@ -18,7 +18,7 @@ from googleapiclient.errors import HttpError
 
 def get_course_work() -> Dict[str, Any]:
     """
-    Fetches all coursework (assignments) from Google Classroom courses.
+    Fetches all coursework (assignments) from Google Classroom courses, including the current user's grade for each assignment.
     
     Returns:
         Dict containing coursework data with structure:
@@ -73,6 +73,19 @@ def get_course_work() -> Dict[str, Any]:
                 for item in coursework:
                     item['courseId'] = course_id
                     item['courseName'] = course_name
+                    
+                    # --- Fetch the current user's submission and grade ---
+                    submission = _get_my_submission_for_assignment(service, course_id, item['id'])
+                    if submission:
+                        item['mySubmission'] = {
+                            'state': submission.get('state'),
+                            'assignedGrade': submission.get('assignedGrade'),
+                            'draftGrade': submission.get('draftGrade'),
+                            'late': submission.get('late'),
+                            'alternateLink': submission.get('alternateLink'),
+                        }
+                    else:
+                        item['mySubmission'] = None
                 
                 all_coursework.extend(coursework)
                 
@@ -191,3 +204,21 @@ def _get_course_coursework(service, course_id: str) -> List[Dict[str, Any]]:
     except HttpError as e:
         print(f"Error fetching coursework for course {course_id}: {e}")
         return []
+
+
+def _get_my_submission_for_assignment(service, course_id: str, course_work_id: str) -> Optional[Dict[str, Any]]:
+    """Fetch the current user's submission for a given assignment."""
+    try:
+        response = service.courses().courseWork().studentSubmissions().list(
+            courseId=course_id,
+            courseWorkId=course_work_id,
+            userId='me',
+            pageSize=1
+        ).execute()
+        submissions = response.get('studentSubmissions', [])
+        if submissions:
+            return submissions[0]
+        return None
+    except HttpError as e:
+        print(f"Error fetching submission for course {course_id}, assignment {course_work_id}: {e}")
+        return None
