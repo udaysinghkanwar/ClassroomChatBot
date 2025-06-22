@@ -109,11 +109,11 @@ data_analyzer_agent = LlmAgent(
 
     If the output is the users grades, output it in a table format. Be creative other times as well, and use colours plus bolding for meaningful aspects if it would enhance the output and user experience.
     
-    If the output is related to assignments, predict the time it would take to complete the assignment. Then, output this data.
+    If the output is related to assignment information, for each of them, predict the time it would take to complete it based on its description. Then, output this data in a nicely formatted table.
     
     If you don't have enough information to answer a question completely, say so and suggest what additional information might be needed.
     
-    IMPORTANT: When the user specifically asks about a calendar or schedule. Do the normal response, then for each assignment or course work with a deadline, call the "add_to_calendar" tool with the assignment_name (str) and the due_date (str) (YYYY-MM-DD) parameters to add this assignment to their calender. In this case, also tell the user in the response that the assignment deadlines have been added to their calender.
+    IMPORTANT: When the user asks about assignment DEADLINES in specific. Do the normal response, then for each assignment or course work with a deadline, call the "add_to_calendar" tool with the assignment_name (str) and the due_date (str) (YYYY-MM-DD) parameters to add this assignment to their calender. In this case, also tell the user in the response that the assignment deadlines have been added to their calender.
     """,
     description="Answers user questions using course work and announcements information, and helps them with completing their assignments/inquiry as best as possible no matter what it is. Also, adds the event to the calender using the tool if the user mentions assignment due dates in specific.",
     tools=[add_to_calendar],
