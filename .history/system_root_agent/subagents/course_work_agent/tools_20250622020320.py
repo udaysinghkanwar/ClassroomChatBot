@@ -1,7 +1,7 @@
 """
-Google Classroom Coursework Tool
+Google Classroom Announcements Tool
 
-This module provides a tool for gathering coursework (assignments) from Google Classroom.
+This module provides a tool for gathering announcements from Google Classroom.
 """
 
 import os
@@ -17,13 +17,13 @@ from googleapiclient.errors import HttpError
 
 def get_course_work() -> Dict[str, Any]:
     """
-    Fetches all coursework (assignments) from Google Classroom courses.
+    Fetches all announcements from Google Classroom courses.
     
     Returns:
-        Dict containing coursework data with structure:
+        Dict containing announcements data with structure:
         {
             "status": "success" | "error",
-            "coursework": [...],
+            "announcements": [...],
             "total_count": int,
             "courses_checked": [...],
             "error_message": str (if status is error)
@@ -36,7 +36,7 @@ def get_course_work() -> Dict[str, Any]:
             return {
                 "status": "error",
                 "error_message": "Failed to initialize Google Classroom API service. Check authentication setup.",
-                "coursework": [],
+                "announcements": [],
                 "total_count": 0,
                 "courses_checked": []
             }
@@ -46,14 +46,14 @@ def get_course_work() -> Dict[str, Any]:
         if not courses:
             return {
                 "status": "success",
-                "coursework": [],
+                "announcements": [],
                 "total_count": 0,
                 "courses_checked": [],
                 "message": "No courses found or no access to courses."
             }
         
-        # Get coursework from all courses
-        all_coursework = []
+        # Get announcements from all courses
+        all_announcements = []
         courses_checked = []
         
         for course in courses:
@@ -65,34 +65,34 @@ def get_course_work() -> Dict[str, Any]:
             })
             
             try:
-                # Get coursework for this course
-                coursework = _get_course_coursework(service, course_id)
+                # Get announcements for this course
+                announcements = _get_course_announcements(service, course_id)
                 
-                # Add course context to each coursework item
-                for item in coursework:
-                    item['courseId'] = course_id
-                    item['courseName'] = course_name
+                # Add course context to each announcement
+                for announcement in announcements:
+                    announcement['courseId'] = course_id
+                    announcement['courseName'] = course_name
                 
-                all_coursework.extend(coursework)
+                all_announcements.extend(announcements)
                 
             except HttpError as e:
                 # Log error but continue with other courses
-                print(f"Error fetching coursework for course {course_id}: {e}")
+                print(f"Error fetching announcements for course {course_id}: {e}")
                 continue
         
         return {
             "status": "success",
-            "coursework": all_coursework,
-            "total_count": len(all_coursework),
+            "announcements": all_announcements,
+            "total_count": len(all_announcements),
             "courses_checked": courses_checked,
-            "message": f"Successfully fetched {len(all_coursework)} coursework items from {len(courses_checked)} courses."
+            "message": f"Successfully fetched {len(all_announcements)} announcements from {len(courses_checked)} courses."
         }
         
     except Exception as e:
         return {
             "status": "error",
             "error_message": f"Unexpected error: {str(e)}",
-            "coursework": [],
+            "announcements": [],
             "total_count": 0,
             "courses_checked": []
         }
@@ -107,7 +107,7 @@ def _get_classroom_service():
             credentials = service_account.Credentials.from_service_account_file(
                 service_account_path,
                 scopes=[
-                    'https://www.googleapis.com/auth/classroom.coursework.readonly',
+                    'https://www.googleapis.com/auth/classroom.announcements.readonly',
                     'https://www.googleapis.com/auth/classroom.courses.readonly'
                 ]
             )
@@ -119,7 +119,7 @@ def _get_classroom_service():
             if os.path.exists(token_path):
                 creds = Credentials.from_authorized_user_file(token_path, 
                     [
-                        'https://www.googleapis.com/auth/classroom.coursework.readonly',
+                        'https://www.googleapis.com/auth/classroom.announcements.readonly',
                         'https://www.googleapis.com/auth/classroom.courses.readonly'
                     ])
             
@@ -164,27 +164,27 @@ def _get_courses(service) -> List[Dict[str, Any]]:
         return []
 
 
-def _get_course_coursework(service, course_id: str) -> List[Dict[str, Any]]:
-    """Get all coursework (assignments) for a specific course."""
+def _get_course_announcements(service, course_id: str) -> List[Dict[str, Any]]:
+    """Get all announcements for a specific course."""
     try:
-        coursework = []
+        announcements = []
         page_token = None
         
         while True:
-            response = service.courses().courseWork().list(
+            response = service.courses().announcements().list(
                 courseId=course_id,
                 pageToken=page_token,
                 pageSize=100
             ).execute()
             
-            coursework.extend(response.get('courseWork', []))
+            announcements.extend(response.get('announcements', []))
             page_token = response.get('nextPageToken')
             
             if not page_token:
                 break
         
-        return coursework
+        return announcements
         
     except HttpError as e:
-        print(f"Error fetching coursework for course {course_id}: {e}")
+        print(f"Error fetching announcements for course {course_id}: {e}")
         return []

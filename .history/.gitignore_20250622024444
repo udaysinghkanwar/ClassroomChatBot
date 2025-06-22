@@ -1,0 +1,9 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+.venv
+.DS_Store
+.env
+credentials.json
+<<<<<<< HEAD
+=======
+token.json
+>>>>>>> 3044804c33d248db204947d1dd76e60914688b8e
