@@ -1,5 +1,4 @@
 google-adk
-yfinance==0.2.56
 psutil==5.9.5
 litellm==1.66.3
 google-generativeai
