@@ -21,6 +21,7 @@ course_work_agent = LlmAgent(
     1. Use the 'get_course_work' tool to gather data from Google Classroom.
     2. Analyze the returned dictionary data for all assignments.
     3. Format this information into a concise, clear section of a system report.
+    4. Send the link to the relevant post or assignment whenever possible.
     
     The tool will return a dictionary with:
     - status: "success" or "error"

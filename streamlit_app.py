@@ -25,7 +25,7 @@ from system_root_agent.agent import root_agent
 
 # Page configuration
 st.set_page_config(
-    page_title="Classroom ChatBot",
+    page_title="LearnBridge",
     page_icon="🎓",
     layout="wide"
 )
@@ -68,7 +68,7 @@ if "session_service" not in st.session_state:
 if "runner" not in st.session_state:
     st.session_state.runner = Runner(
         agent=root_agent,
-        app_name="Classroom ChatBot",
+        app_name="AI for Google Classroom and Students",
         session_service=st.session_state.session_service,
     )
 

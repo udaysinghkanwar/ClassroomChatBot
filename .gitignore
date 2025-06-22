@@ -5,3 +5,7 @@
 credentials.json
 token.json
 .history
+add_event.py
+*.json
+extract_drive_test.py
+patch*
