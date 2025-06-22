@@ -17,7 +17,7 @@ announcement_agent = LlmAgent(
     model=GEMINI_MODEL,
     instruction="""You are an Announcement Agent for Google Classroom.
     
-    When asked for announcement information, you should:
+    When asked for any information, you should:
     1. Use the 'get_announcements' tool to gather announcements data from Google Classroom
     2. Analyze the returned dictionary data
     3. Format this information into a concise, clear section of a system report
