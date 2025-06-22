@@ -1,5 +1,8 @@
-google-adk[database]==0.3.0
+google-adk
+<<<<<<< HEAD
 yfinance==0.2.56
+=======
+>>>>>>> 3044804c33d248db204947d1dd76e60914688b8e
 psutil==5.9.5
 litellm==1.66.3
 google-generativeai

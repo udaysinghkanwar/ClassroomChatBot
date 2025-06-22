@@ -1,5 +1,4 @@
 """
-Course Work Information Tool
 Google Classroom Coursework Tool
 
 This module provides a tool for gathering coursework (assignments) from Google Classroom.

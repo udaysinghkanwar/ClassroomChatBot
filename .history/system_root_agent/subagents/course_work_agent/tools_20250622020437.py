@@ -1,5 +1,4 @@
 """
-Course Work Information Tool
 Google Classroom Coursework Tool
 
 This module provides a tool for gathering coursework (assignments) from Google Classroom.
@@ -108,7 +107,8 @@ def _get_classroom_service():
             credentials = service_account.Credentials.from_service_account_file(
                 service_account_path,
                 scopes=[
-                    'https://www.googleapis.com/auth/classroom.coursework.readonly',
+                    'https://www.googleapis.com/auth/classroom.coursework.me.readonly',
+                    'https://www.googleapis.com/auth/classroom.coursework.students.readonly',
                     'https://www.googleapis.com/auth/classroom.courses.readonly'
                 ]
             )
@@ -120,7 +120,8 @@ def _get_classroom_service():
             if os.path.exists(token_path):
                 creds = Credentials.from_authorized_user_file(token_path, 
                     [
-                        'https://www.googleapis.com/auth/classroom.coursework.readonly',
+                        'https://www.googleapis.com/auth/classroom.coursework.me.readonly',
+                        'https://www.googleapis.com/auth/classroom.coursework.students.readonly',
                         'https://www.googleapis.com/auth/classroom.courses.readonly'
                     ])
             

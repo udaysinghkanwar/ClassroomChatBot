@@ -36,6 +36,7 @@ course_work_agent = LlmAgent(
     - Any ungraded assignments (where maxPoints is 0 or not set).
     
     IMPORTANT: You MUST call the get_course_work tool. Do not make up information.
+    If there are no announcements or errors, clearly state that in your response.
     """,
     description="Gathers and analyzes Google Classroom course work information.",
     tools=[get_course_work],
