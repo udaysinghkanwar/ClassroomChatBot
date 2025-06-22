@@ -13,7 +13,8 @@ TOKEN_FILE = "token.json"
 # They must match the ones in tools.py
 SCOPES = [
     'https://www.googleapis.com/auth/classroom.announcements.readonly',
-    'https://www.googleapis.com/auth/classroom.courses.readonly'
+    'https://www.googleapis.com/auth/classroom.courses.readonly',
+    'https://www.googleapis.com/auth/classroom.student-submissions.me.readonly'
 ]
 
 def authenticate():
