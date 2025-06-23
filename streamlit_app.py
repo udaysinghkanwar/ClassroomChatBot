@@ -11,6 +11,7 @@ from typing import Dict, Any
 import sys
 import os
 from datetime import datetime
+import uuid
 
 # Add the system_root_agent to the path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'system_root_agent'))
@@ -23,9 +24,17 @@ from google.genai import types
 # Import the main system root agent
 from system_root_agent.agent import root_agent
 
+# Import OAuth configuration
+from oauth_web_config import (
+    is_user_authenticated, 
+    get_auth_url, 
+    handle_oauth_callback,
+    get_classroom_service
+)
+
 # Page configuration
 st.set_page_config(
-    page_title="Classroom ChatBot",
+    page_title="LearnBridge",
     page_icon="🎓",
     layout="wide"
 )
@@ -58,8 +67,86 @@ st.markdown("""
         border: 1px solid #333;
         margin: 1rem 0;
     }
+    .auth-container {
+        text-align: center;
+        padding: 2rem;
+        background-color: #1e1e1e;
+        border-radius: 0.5rem;
+        border: 1px solid #333;
+        margin: 2rem 0;
+    }
 </style>
 """, unsafe_allow_html=True)
+
+def get_user_id():
+    """Get or create a unique user ID for the current session."""
+    if 'user_id' not in st.session_state:
+        st.session_state.user_id = str(uuid.uuid4())
+    return st.session_state.user_id
+
+def handle_oauth_callback_from_url():
+    """Handle OAuth callback from URL parameters."""
+    # Check if we have OAuth callback parameters
+    query_params = st.experimental_get_query_params()
+    code = query_params.get('code', [None])[0]
+    state = query_params.get('state', [None])[0]
+    
+    if code and state:
+        # Handle the OAuth callback
+        if handle_oauth_callback(code, state):
+            st.success("✅ Authentication successful! You can now use the chatbot.")
+            # Clear the URL parameters
+            st.experimental_set_query_params()
+            st.rerun()
+        else:
+            st.error("❌ Authentication failed. Please try again.")
+
+def show_authentication_page():
+    """Show the authentication page."""
+    st.title("🎓 LearnBridge")
+    st.markdown("### Your AI assistant for Google Classroom - Powered by ADK & Gemini LLM")
+    
+    with st.container():
+        st.markdown("""
+        <div class="auth-container">
+            <h3>🔐 Google Classroom Authentication Required</h3>
+            <p>To use LearnBridge, you need to authenticate with your Google Classroom account.</p>
+            <p>This will allow the AI assistant to access your classroom data securely.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🔑 Connect Google Classroom", type="primary", use_container_width=True):
+                user_id = get_user_id()
+                auth_url = get_auth_url(user_id)
+                st.markdown(f"""
+                <div style="text-align: center; margin: 2rem 0;">
+                    <a href="{auth_url}" target="_self" style="
+                        display: inline-block;
+                        background-color: #4285f4;
+                        color: white;
+                        padding: 12px 24px;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-weight: bold;
+                    ">
+                        🔑 Connect with Google
+                    </a>
+                </div>
+                """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="margin-top: 2rem; padding: 1rem; background-color: #1e1e1e; border-radius: 0.5rem;">
+            <h4>🔒 Privacy & Security</h4>
+            <ul>
+                <li>Your credentials are stored securely in your browser session</li>
+                <li>We only access the data you authorize</li>
+                <li>No data is stored permanently on our servers</li>
+                <li>You can revoke access anytime from your Google Account settings</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
 # Initialize session state
 if "session_service" not in st.session_state:
@@ -71,9 +158,6 @@ if "runner" not in st.session_state:
         app_name="Classroom ChatBot",
         session_service=st.session_state.session_service,
     )
-
-if "user_id" not in st.session_state:
-    st.session_state.user_id = "default_user"
 
 if "session_id" not in st.session_state:
     # Create initial session
@@ -87,13 +171,22 @@ if "session_id" not in st.session_state:
     
     new_session = st.session_state.session_service.create_session(
         app_name="Classroom ChatBot",
-        user_id=st.session_state.user_id,
+        user_id=get_user_id(),
         state=initial_state,
     )
     st.session_state.session_id = new_session.id
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+# Handle OAuth callback
+handle_oauth_callback_from_url()
+
+# Check if user is authenticated
+user_id = get_user_id()
+if not is_user_authenticated(user_id):
+    show_authentication_page()
+    st.stop()
 
 def update_interaction_history(entry):
     """Add an entry to the interaction history in state."""
@@ -225,7 +318,7 @@ def main():
     """Main Streamlit app function."""
     
     # Header
-    st.title("🎓 Classroom ChatBot")
+    st.title("🎓 LearnBridge")
     st.markdown("Your AI assistant for Google Classroom - Powered by ADK & Gemini LLM")
     
     # Sidebar
@@ -281,7 +374,7 @@ def main():
         display_current_state()
     
     # Chat interface
-    st.header("💬 Chat with AI Agents")
+    #st.header("💬 Start Chatting")
     
     # Display chat messages
     for message in st.session_state.messages:

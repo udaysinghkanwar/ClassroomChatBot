@@ -7,12 +7,18 @@ This module provides a tool for gathering announcements from Google Classroom.
 import os
 import time
 from typing import Any, Dict, List, Optional
+import streamlit as st
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+
+# Import the new OAuth configuration
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+from oauth_web_config import get_classroom_service, get_user_id
 
 
 def get_announcements() -> Dict[str, Any]:
@@ -30,12 +36,14 @@ def get_announcements() -> Dict[str, Any]:
         }
     """
     try:
-        # Initialize the Classroom API service
-        service = _get_classroom_service()
+        # Get user ID and service
+        user_id = get_user_id()
+        service = get_classroom_service(user_id)
+        
         if not service:
             return {
                 "status": "error",
-                "error_message": "Failed to initialize Google Classroom API service. Check authentication setup.",
+                "error_message": "Failed to initialize Google Classroom API service. Please authenticate with Google Classroom.",
                 "announcements": [],
                 "total_count": 0,
                 "courses_checked": []
@@ -96,47 +104,6 @@ def get_announcements() -> Dict[str, Any]:
             "total_count": 0,
             "courses_checked": []
         }
-
-
-def _get_classroom_service():
-    """Initialize and return the Google Classroom API service."""
-    try:
-        # Try service account authentication first
-        service_account_path = os.getenv('GOOGLE_SERVICE_ACCOUNT_PATH')
-        if service_account_path and os.path.exists(service_account_path):
-            credentials = service_account.Credentials.from_service_account_file(
-                service_account_path,
-                scopes=[
-                    'https://www.googleapis.com/auth/classroom.announcements.readonly',
-                    'https://www.googleapis.com/auth/classroom.courses.readonly'
-                ]
-            )
-        else:
-            # Try OAuth2 credentials
-            creds = None
-            token_path = os.getenv('GOOGLE_TOKEN_PATH', 'token.json')
-            
-            if os.path.exists(token_path):
-                creds = Credentials.from_authorized_user_file(token_path, 
-                    [
-                        'https://www.googleapis.com/auth/classroom.announcements.readonly',
-                        'https://www.googleapis.com/auth/classroom.courses.readonly'
-                    ])
-            
-            if not creds or not creds.valid:
-                if creds and creds.expired and creds.refresh_token:
-                    creds.refresh(Request())
-                else:
-                    return None
-            
-            credentials = creds
-        
-        service = build('classroom', 'v1', credentials=credentials)
-        return service
-        
-    except Exception as e:
-        print(f"Error initializing Classroom service: {e}")
-        return None
 
 
 def _get_courses(service) -> List[Dict[str, Any]]:
