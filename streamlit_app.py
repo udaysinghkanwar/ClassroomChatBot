@@ -117,36 +117,35 @@ def show_authentication_page():
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("🔑 Connect Google Classroom", type="primary", use_container_width=True):
-                user_id = get_user_id()
-                auth_url = get_auth_url(user_id)
-                st.markdown(f"""
-                <div style="text-align: center; margin: 2rem 0;">
-                    <a href="{auth_url}" target="_self" style="
-                        display: inline-block;
-                        background-color: #4285f4;
-                        color: white;
-                        padding: 12px 24px;
-                        text-decoration: none;
-                        border-radius: 5px;
-                        font-weight: bold;
-                    ">
-                        🔑 Connect with Google
-                    </a>
-                </div>
-                """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div style="margin-top: 2rem; padding: 1rem; background-color: #1e1e1e; border-radius: 0.5rem;">
-            <h4>🔒 Privacy & Security</h4>
-            <ul>
-                <li>Your credentials are stored securely in your browser session</li>
-                <li>We only access the data you authorize</li>
-                <li>No data is stored permanently on our servers</li>
-                <li>You can revoke access anytime from your Google Account settings</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+            user_id = get_user_id()
+            auth_url = get_auth_url(user_id)
+            st.markdown(f'''
+            <div style="text-align: center; margin: 2rem 0;">
+                <a href="{auth_url}" target="_blank" style="
+                    display: inline-block;
+                    background-color: #4285f4;
+                    color: white;
+                    padding: 12px 24px;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                ">
+                    🔑 Connect with Google
+                </a>
+            </div>
+            ''', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="margin-top: 2rem; padding: 1rem; background-color: #1e1e1e; border-radius: 0.5rem;">
+        <h4>🔒 Privacy & Security</h4>
+        <ul>
+            <li>Your credentials are stored securely in your browser session</li>
+            <li>We only access the data you authorize</li>
+            <li>No data is stored permanently on our servers</li>
+            <li>You can revoke access anytime from your Google Account settings</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Initialize session state
 if "session_service" not in st.session_state:
