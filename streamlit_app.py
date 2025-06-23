@@ -192,7 +192,7 @@ def update_interaction_history(entry):
     """Add an entry to the interaction history in state."""
     try:
         # Get current session
-        session = st.session_state.session_service.get_session(
+        session = st.session_state.session_service.get_session_sync(
             app_name="Classroom ChatBot",
             user_id=st.session_state.user_id,
             session_id=st.session_state.session_id
@@ -240,7 +240,7 @@ def add_agent_response_to_history(agent_name, response):
 def display_current_state():
     """Display the current session state."""
     try:
-        session = st.session_state.session_service.get_session(
+        session = st.session_state.session_service.get_session_sync(
             app_name="Classroom ChatBot",
             user_id=st.session_state.user_id,
             session_id=st.session_state.session_id
