@@ -5,7 +5,11 @@ Google Classroom Coursework Tool
 This module provides a tool for gathering coursework (assignments) from Google Classroom.
 """
 
+import sys
 import os
+# Add project root to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) )
+
 import time
 from typing import Any, Dict, List, Optional
 import streamlit as st
@@ -16,9 +20,6 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# Import the new OAuth configuration
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 from oauth_web_config import get_classroom_service, get_user_id
 
 
