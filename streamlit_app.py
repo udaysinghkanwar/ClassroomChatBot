@@ -169,7 +169,7 @@ if "session_id" not in st.session_state:
         "last_coursework_check": None,
     }
     
-    new_session = st.session_state.session_service.create_session(
+    new_session = st.session_state.session_service.create_session_sync(
         app_name="Classroom ChatBot",
         user_id=get_user_id(),
         state=initial_state,
@@ -213,7 +213,7 @@ def update_interaction_history(entry):
         updated_state["interaction_history"] = interaction_history
 
         # Create a new session with updated state
-        st.session_state.session_service.create_session(
+        st.session_state.session_service.create_session_sync(
             app_name="Classroom ChatBot",
             user_id=st.session_state.user_id,
             session_id=st.session_state.session_id,
@@ -357,7 +357,7 @@ def main():
                 "last_coursework_check": None,
             }
             
-            new_session = st.session_state.session_service.create_session(
+            new_session = st.session_state.session_service.create_session_sync(
                 app_name="Classroom ChatBot",
                 user_id=st.session_state.user_id,
                 state=initial_state,
