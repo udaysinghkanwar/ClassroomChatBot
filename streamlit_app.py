@@ -175,6 +175,7 @@ if "session_id" not in st.session_state:
         state=initial_state,
     )
     st.session_state.session_id = new_session.id
+    print("DEBUG: type(new_session) =", type(new_session))
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
